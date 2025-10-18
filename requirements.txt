@@ -20,7 +20,7 @@ service:<siid>:action:<aiid>    # action - тип, aiid — id действия
 
 {
     "urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1": {
-        "ru": {
+        "en": {
             "service:002": "養生壺",
             "service:002:property:001": "工作狀態",
             "service:002:property:001:valuelist:000": "待機中",
