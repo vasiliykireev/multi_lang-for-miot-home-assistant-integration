@@ -4,6 +4,8 @@
 
 Подробнее: https://github.com/XiaoMi/ha_xiaomi_home/?tab=readme-ov-file#multiple-language-support
 
+URN устройства можно найти на странице: http://miot-spec.org/miot-spec-v2/instances?status=all
+
 ## Что делает
 - Берёт URN устройства MIoT и запрашивает спецификацию по URL:
   `http://miot-spec.org/miot-spec-v2/instance?type=<URN>`
