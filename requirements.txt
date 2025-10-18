@@ -1,0 +1,31 @@
+Напиши скрипт properties.py, который будет собирать информацию для lang-файла интеграции Xiaomi с Home Assistant.
+
+
+Требования:
+- В переменную urn записывается urn устройства Xiaomi, например: 'urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1'
+- Скрипт получает JSON-спецификацию устройства по адресу 'http://miot-spec.org/miot-spec-v2/instance?type='urn, например: 'http://miot-spec.org/miot-spec-v2/instance?type=urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1'
+Если страница отдает ответ не 200, уведомлять об этом пользователя.
+- Из специцикации скрипт должен получать данные:
+service:<siid>                  # service — тип, siid — iid сервиса
+service:<siid>:property:<piid>  # property - тип, piid — iid свойства
+service:<siid>:property:<piid>:valuelist:<index> # The index of a value in the value-list of a property
+service:<siid>:event:<eiid>     # event - тип, eiid — id события
+service:<siid>:action:<aiid>    # action - тип, aiid — id действия
+
+Каждое из них имеет description, который нужен для переводимых значений lang-файла.
+
+- Скрипт должен записывать полученные данные, как в примере:
+
+Данные: description
+
+{
+    "urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1": {
+        "ru": {
+            "service:002": "養生壺",
+            "service:002:property:001": "工作狀態",
+            "service:002:property:001:valuelist:000": "待機中",
+            "service:002:action:002": "停止烹飪",
+            "service:005:event:001": "烹飪完成"
+        }
+    }
+}
