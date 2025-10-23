@@ -127,7 +127,7 @@ def find_services(root: Any) -> List[Dict[str, Any]]:
     return found
 
 
-def build_mapping(data: Dict[str, Any], urn: str, lang: str = "ru") -> Dict[str, Dict[str, str]]:
+def build_mapping(data: Dict[str, Any], urn: str, lang: str = "en") -> Dict[str, Dict[str, str]]:
     services = find_services(data)
     mapping: Dict[str, str] = {}
 
@@ -202,7 +202,7 @@ def main(argv: Optional[List[str]] = None) -> int:
     p.add_argument("urn", nargs="?", help="URN устройства, например: urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1")
     p.add_argument("--output", "-o", help="Если указано, сохраняет результат в файл (JSON). По умолчанию будет использовано '<urn>.json'")
     p.add_argument("--file", "-f", help="Использовать локальный файл JSON спецификации вместо запроса по сети")
-    p.add_argument("--lang", "-l", default="ru", help="Ключ языка для вывода (по умолчанию: ru)")
+    p.add_argument("--lang", "-l", default="en", help="Ключ языка для вывода (по умолчанию: ru)")
     args = p.parse_args(argv)
 
     if not args.urn:
