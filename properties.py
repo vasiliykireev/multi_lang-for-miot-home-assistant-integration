@@ -15,16 +15,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import ssl
 import sys
-import urllib.request
 import urllib.error
+import urllib.request
 from typing import Any, Dict, List, Optional
 
 
-def fetch_instance(urn: str) -> Dict[str, Any]:
-    url = f"http://miot-spec.org/miot-spec-v2/instance?type={urn}"
+def fetch_instance(urn: str, context: Optional[ssl.SSLContext] = None) -> Dict[str, Any]:
+    url = f"https://miot-spec.org/miot-spec-v2/instance?type={urn}"
     try:
-        with urllib.request.urlopen(url) as resp:
+        with urllib.request.urlopen(url, context=context) as resp:
             status = resp.getcode()
             if status != 200:
                 raise urllib.error.HTTPError(url, status, f"HTTP {status}", hdrs=None, fp=None)
@@ -197,12 +198,30 @@ def normalize_urn(urn: str) -> str:
     return urn
 
 
+def build_ssl_context(insecure: bool, cafile: Optional[str]) -> ssl.SSLContext:
+    if insecure:
+        ctx = ssl.create_default_context()
+        ctx.check_hostname = False
+        ctx.verify_mode = ssl.CERT_NONE
+        return ctx
+    if cafile:
+        return ssl.create_default_context(cafile=cafile)
+    try:
+        import certifi  # type: ignore
+
+        return ssl.create_default_context(cafile=certifi.where())
+    except Exception:
+        return ssl.create_default_context()
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     p = argparse.ArgumentParser(description="Собирает описания свойств MIoT-устройства для lang-файла.")
     p.add_argument("urn", nargs="?", help="URN устройства, например: urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1")
     p.add_argument("--output", "-o", help="Если указано, сохраняет результат в файл (JSON). По умолчанию будет использовано '<urn>.json'")
     p.add_argument("--file", "-f", help="Использовать локальный файл JSON спецификации вместо запроса по сети")
     p.add_argument("--lang", "-l", default="en", help="Ключ языка для вывода (по умолчанию: ru)")
+    p.add_argument("--cafile", help="Путь к файлу с корневыми сертификатами для HTTPS")
+    p.add_argument("--insecure", action="store_true", help="Отключить проверку SSL-сертификатов (небезопасно)")
     args = p.parse_args(argv)
 
     if not args.urn:
@@ -222,7 +241,8 @@ def main(argv: Optional[List[str]] = None) -> int:
             return 5
     else:
         try:
-            data = fetch_instance(urn)
+            ssl_context = build_ssl_context(args.insecure, args.cafile)
+            data = fetch_instance(urn, context=ssl_context)
         except Exception:
             print("Не удалось получить спецификацию устройства. Проверьте URN и сетевое соединение.")
             return 3

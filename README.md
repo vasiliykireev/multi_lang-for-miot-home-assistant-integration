@@ -4,11 +4,11 @@
 
 Подробнее: https://github.com/XiaoMi/ha_xiaomi_home/?tab=readme-ov-file#multiple-language-support
 
-URN устройства можно найти на странице: http://miot-spec.org/miot-spec-v2/instances?status=all
+URN устройства можно найти на странице: https://miot-spec.org/miot-spec-v2/instances?status=all
 
 ## Что делает
 - Берёт URN устройства MIoT и запрашивает спецификацию по URL:
-  `http://miot-spec.org/miot-spec-v2/instance?type=<URN>`
+  `https://miot-spec.org/miot-spec-v2/instance?type=<URN>`
 - Извлекает описания для:
   - service:<siid>
   - service:<siid>:property:<piid>
@@ -54,27 +54,30 @@ python3 properties.py 'urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1:1' 
 python3 properties.py 'urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1:1' --file path/to/local.json --output result.json
 ```
 
-- Указать язык-ключ (по умолчанию `ru`):
+- Указать язык-ключ (по умолчанию `en`):
 
 ```bash
 python3 properties.py 'urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1:1' --lang en
 ```
 
-Примечание: если опция `--output` не указана, результат будет сохранён в файл с именем `<URN>.json`, например:
+Примечание: если опция `--output` не указана, результат будет сохранён в файл с именем `<normalized_URN>.json`, например:
 
 ```bash
 # если не указать --output
 python3 properties.py 'urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1:1'
-# сохранит в файл 'urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1:1.json'
+# сохранит в файл 'urn:miot-spec-v2:device:health-pot:0000A051:chunmi-a1.json'
 ```
 
 ## Опции
 - `--file` / `-f` — использовать локальный JSON-файл вместо сетевого запроса.
 - `--output` / `-o` — сохранить результат в указанный файл.
-- `--lang` / `-l` — ключ языка в результирующей структуре (по умолчанию `ru`).
+- `--lang` / `-l` — ключ языка в результирующей структуре (по умолчанию `en`).
+- `--cafile` — путь к файлу с корневыми сертификатами для HTTPS.
+- `--insecure` — отключить проверку SSL-сертификатов (небезопасно, только для обхода).
 
 ## Замечания и отладка
 - Если URL спецификации возвращает код отличной от 200, скрипт сообщит об ошибке.
+- При ошибке вида `CERTIFICATE_VERIFY_FAILED` укажите `--cafile` с путём к сертификатам или временно используйте `--insecure`.
 - Поля в JSON-спецификации могут отличаться по названиям (value-list / valueList / enum и т.д.). Скрипт пытается учесть несколько распространённых вариантов.
 - Для нестандартных или сильно вложенных спецификаций может потребоваться ручная корректировка парсера.
 
